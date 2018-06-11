@@ -35,13 +35,13 @@ For each team we can build a graph. Each player will represent a node in the gra
 
 The result of this is that we can create a directed graph that shows how important on average the connection between two players is for that team. Ideally, we would have access to how many points actually resulted from player A passing to player B, but this data is not freely available and is property of the NBA. Using this approach we can visualize this same Golden State Warriors team as follows:
 
-![alt text](Figures/TeamGraphs/GSW_2018.png)
+![alt text](Figures/TeamGraphs/GSW_2018_full.png)
 
 In this visualization each circle represents a single player, the color of the circle represents their position with lighter colors being smaller ball handlers and dark colors being larger players, and the size of the circle represents how many points that player scores per game. The thickness of the line between two players reflects the Scoring Potential of that pair of players.
 
 If we look at the same plot for the team the Golden State Warriors played in the NBA Finals this year (2018), we can see a very stark contrast in terms of the way the teams were constructed:
 
-![alt text](Figures/TeamGraphs/CLE_2018.png)
+![alt text](Figures/TeamGraphs/CLE_2018_full.png)
 
 While the Golden State Warriors have multiple heavily interconnected nodes with thick lines representing a high Scoring Potential, the Cleveland Cavaliers have essentially one node (LeBron James) that dominates the team graph. He has multiple thick lines emanating from his node, but in one image the graph shows that the Cleveland Cavaliers were strongly dependent on one player for a majority of their Scoring Potential whereas the Golden State Warriors were extremely balanced and could score using many different combinations of players.
 
