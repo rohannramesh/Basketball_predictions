@@ -119,7 +119,7 @@ We can now use the same approach to see if the clusters we have identified are a
 
 Clusters 				       		   |  Wins - Losses tSNE plot    	  			   |  Wins - Losses barplot for individual clusters
 :-------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
-![](Figures/tsne/tsne_Agg_Clusters.png)|  ![](Figures/tsne/tsne_W-L.png) 	       |  ![](Figures/BarPlots/bar_clusters_W - L.png) 
+![](Figures/tsne/tsne_Agg_Clusters.png)|  ![](Figures/tsne/tsne_W-L.png) 	           |  ![](Figures/BarPlots/bar_clusters_W-L.png) 
 
 While in the tsne plot we see a clustering of bright colors in some clusters but not in others, the predictive power of each cluster is clear using the barplot (number of teams per cluster above or below each bar). Teams in clusters 2 and 8 were more likely to win games than to lose games, and teams in clusters 3 and 4 were more likely to lose games than to win games. This suggests there is something about the graphs for teams in clusters 2 and 8 that make them more likely to win vs. lose.
 
@@ -131,19 +131,19 @@ Points per game (PPG)     						 |  Assists per game (APG)
 
 These graphs suggest that it is something specific about the structure of the team or the way the team is organized that predicts the team winning more games than it loses. To gain intuition about the team structure in clusters 2, 3, 4, and 8 let's look at some example graphs for each of these teams. First the winning teams
 
-		 				       		         |  Teams in cluster 2 		   	  			    |  
-:-------------------------------------------:|:--------------------------------------------:|:---------------------------------------------:
-![](Figures/TeamGraphs/Cluster1/2009_NJN.png)| ![](Figures/TeamGraphs/Cluster1/2010_OKC.png)| ![](Figures/TeamGraphs/Cluster1/2009_POR.png) 
-![](Figures/TeamGraphs/Cluster1/2011_CHI.png)| ![](Figures/TeamGraphs/Cluster1/2011_MIA.png)| ![](Figures/TeamGraphs/Cluster1/2013_TOR.png) 
-![](Figures/TeamGraphs/Cluster1/2014_HOU.png)| ![](Figures/TeamGraphs/Cluster1/2018_POR.png)| ![](Figures/TeamGraphs/Cluster1/2015_PHO.png) 
+		 				       		         |  Teams in cluster 2 		   	  			     |  
+:-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
+![](Figures/TeamGraphs/Cluster1/2009_NJN.png)|  ![](Figures/TeamGraphs/Cluster1/2010_OKC.png)|  ![](Figures/TeamGraphs/Cluster1/2009_POR.png) 
+![](Figures/TeamGraphs/Cluster1/2011_CHI.png)|  ![](Figures/TeamGraphs/Cluster1/2011_MIA.png)|  ![](Figures/TeamGraphs/Cluster1/2013_TOR.png) 
+![](Figures/TeamGraphs/Cluster1/2014_HOU.png)|  ![](Figures/TeamGraphs/Cluster1/2018_POR.png)|  ![](Figures/TeamGraphs/Cluster1/2015_PHO.png) 
 
-		 				       		         |  Teams in cluster 8 		   	  			    |  
-:-------------------------------------------:|:--------------------------------------------:|:---------------------------------------------:
-![](Figures/TeamGraphs/Cluster7/2009_LAL.png)| ![](Figures/TeamGraphs/Cluster7/2010_LAL.png)| ![](Figures/TeamGraphs/Cluster7/2011_LAL.png) 
+		 				       		         |  Teams in cluster 8 		   	  			     |  
+:-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
+![](Figures/TeamGraphs/Cluster7/2009_LAL.png)|  ![](Figures/TeamGraphs/Cluster7/2010_LAL.png)|  ![](Figures/TeamGraphs/Cluster7/2011_LAL.png) 
 
-		 				       		         |  Teams in clusters 3 and 4 		   	  	    |  
-:-------------------------------------------:|:--------------------------------------------:|:---------------------------------------------:
-![](Figures/TeamGraphs/Cluster2/2012_DEN.png)| ![](Figures/TeamGraphs/Cluster2/2012_LAL.png)| ![](Figures/TeamGraphs/Cluster2/2014_CHI.png) 
-![](Figures/TeamGraphs/Cluster2/2016_BRK.png)| ![](Figures/TeamGraphs/Cluster3/2014_LAL.png)| ![](Figures/TeamGraphs/Cluster3/2013_ORL.png) 
-![](Figures/TeamGraphs/Cluster3/2015_PHI.png)| ![](Figures/TeamGraphs/Cluster3/2016_NOP.png)| ![](Figures/TeamGraphs/Cluster3/2015_BOS.png) 
+		 				       		         |  Teams in clusters 3 and 4 		   	  	     |  
+:-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
+![](Figures/TeamGraphs/Cluster2/2012_DEN.png)|  ![](Figures/TeamGraphs/Cluster2/2012_LAL.png)|  ![](Figures/TeamGraphs/Cluster2/2014_CHI.png) 
+![](Figures/TeamGraphs/Cluster2/2016_BRK.png)|  ![](Figures/TeamGraphs/Cluster3/2014_LAL.png)|  ![](Figures/TeamGraphs/Cluster3/2013_ORL.png) 
+![](Figures/TeamGraphs/Cluster3/2015_PHI.png)|  ![](Figures/TeamGraphs/Cluster3/2016_NOP.png)|  ![](Figures/TeamGraphs/Cluster3/2015_BOS.png) 
 
