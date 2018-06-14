@@ -5,7 +5,7 @@
 
 In recent years, advanced sports analytics has changed the way we evaluate players and teams for all sports. While the popularization of sports analytics started in baseball, most sports have kept some form of statistics for decades. We evaluate how "useful" players are and how they contribute to team success by providing numbers that quantify their performance on the field, court, etc. In many ways, baseball is the perfect sport for an analytical approach: one pitcher faces one batter and each pitch or each at bat represents an independent sample that we can quantify and evaluate. Basketball, however, is more challenging. While there are commonly cited statistics such as how many points a player scores per game (points per game: PPG), or how many passes by a player results in points (assists), these numbers can be difficult to evaluate in isolation. Obviously, it is difficult to score points at the professional level if you are not skilled at basketball, but there might be different expectations depending on the rest of the players on your team. Scoring 25 points per game might be less impressive if you are surrounded by a subpar supporting cast. Fundamentally, basketball is a team game. Therefore to evaluate players and team success, it is useful to evaluate player performance in the framework of the team. To do this we will turn to graph theory to model the pairwise relations between players on a team. Using this approach we can simultaneous evaluate the importance of single player to their team, what team structures are most successful (i.e. lead to the most wins), and potentially provide new metrics for player evaluation.
 
-# Building the graph for each team
+## Building the graph for each team
 
 All of the single player data was scraped from [here](https://www.basketball-reference.com/) using this code [LINK]. From this website we can collect all of the statistics for each player from multiple years (for the purposes of this work I have only included from 2009-present day). These statistics include per game averages, averages per 100 possesions, and some of the commonly used advanced statistics used in basketball (discussed below). Below you can see a subselection of the stats included for the current NBA champions the Golden State Warriors. We can see all of the players on this team, what position they play (Pos), their points per game and assists, the number minutes played (MP), the number of field goals (baskets) made (FG) and attempted per game (FGA), as well as their shooting percentages for two- and three-point shots (2P% and 3P%)
 
@@ -43,7 +43,71 @@ If we look at the same plot for the team the Golden State Warriors played in the
 
 ![alt text](Figures/TeamGraphs/CLE_2018_full.png)
 
-While the Golden State Warriors have multiple heavily interconnected nodes with thick lines representing a high Scoring Potential, the Cleveland Cavaliers have essentially one node (LeBron James) that dominates the team graph. He has multiple thick lines emanating from his node, but in one image the graph shows that the Cleveland Cavaliers were strongly dependent on one player for a majority of their Scoring Potential whereas the Golden State Warriors were extremely balanced and could score using many different combinations of players.
+While the Golden State Warriors have multiple heavily interconnected nodes with thick lines representing a high Scoring Potential, the Cleveland Cavaliers have essentially one node (LeBron James) that dominates the team graph. He has multiple thick lines emanating from his node, but using this approach we can easily show that the Cleveland Cavaliers were strongly dependent on one player for a majority of their Scoring Potential whereas the Golden State Warriors were extremely balanced and could score using many different combinations of players.
+
+## Results from graph theory analysis
+
+* Over the past 10 years there have been roughly 10 different types of team structures, and this graph architecture has been stable. 
+	* This implies that even though teams are shooting more 3-point shots and playing more "small-ball" (more like-size, smaller players on the floor at one time, i.e. Golden State's famous Death-lineup or the Hampton's Five), the teams are still roughly organized the same in terms of Scoring Potential
+
+* Certain graph/team architectures are more likely to produce wins than losses
+	* Using these graph/team architectures we see that teams that produce more wins are centered around 1-3 "stars" or players that dominate their teams graph
+	* Teams that lose more games than they win are more balanced and less dependent on single players
+	* On average, the top 3 players are better on winning teams than on losing teams (as measured by a Player Efficiency Rating or PER)
+	* On average, the bottom 5 players (of an 8 man rotation) are worse on winning teams than on losing teams (as measured by PER)
+
+* We can use graph theory metrics to predict advanced stats for individual players like Player Efficiency Rating, suggesting player-player and player-team interactions can be used as an evaluation approach
+	* The eigenvector centrality (will be discussed below) was most strongly predictive of individual player statistics such as PER, though many other graph theory metrics did contribute
+
+## Analytical approach
+
+I first built a graph for every team from 2009-2018 using data from [here](https://www.basketball-reference.com/) and the methods described above. Because teams will change the players at the end of their roster (i.e. people who do not play very often), I subselected the top 8 players in terms of minutes played for each team. Within my dataset for individual players I scraped individual per game statistics (most commonly used), per 100 possession statistics, and commonly used advanced statistics (amalgamations of single player per game and per 100 possession statistics). Importantly for those players that played for multiple teams within the same season, I only included the team on which they played the most minutes so that I would not double count any player.
+
+I also scraped data for the collective team (total wins vs. losses, points for during each game, points against during each game, etc.) from [here](https://www.foxsports.com/nba/). I combined the graph theory metrics described below and incorporated them into my dataFrame containing the team metrics.
+
+Graph specifics and metrics collected from each graph
+	* Each graph is a directed graph, meaning that there is a direction ascribed to each edge (lines) between two nodes (players)
+		* This will later be useful as it allows us to determine the path length within a graph and who acts as a source (i.e a player who passes the ball) and a person who acts as a scorer (the person who receives the pass and scores)
+	* Each graph is visualized using the Kamada-kawai-layout which is a force based layout strategy that minimizes edge crossings and tries to enforce small uniform edge lengths
+	* Metrics collected from each graph for each team from every year
+		* weighted clustering - the geometric average of the subgraph edge weights
+			* clustering refers to tightly connected neighborhoods of nodes, i.e. the number of triangles a node participates in and weighted clustering additionally accounts for the Scoring Potential of that edge (connection between 2 nodes)
+		* eigenvector centrality - a measure of the influence of a node in a network (in our case a player on his team)
+			* a high eigenvector score means a node is connected to other high scoring nodes (i.e. a node is important if it is linked to other important nodes)
+		* pagerank - a ranking algorithm to measure the importance of a node by counting the number and quality of edges to that node
+			* a high pagerank in our graph means you score but don't generate points and a low pagerank means you pass but don't score
+		* dijkstra length - a way to define the shortest path between nodes factoring in the weight of each edge summed across all players in the graph
+		* shortest path length - alternate form for measuring path length
+		* closeness vitality - how much does the sum of the distances between all other nodes (as measured by edge weights) change when you drop out a node
+		* current flow closeness centrality - information centrality - an alternate approach to measuring centrality
+			* views the graph as a resistor network with edges as resistors and nodes as junctions
+
+
+I then used all of these metric and performed agglomerative hierarchical clustering and dimensionality reduction using t-sne. By eye, it appeared like I had ~10 clusters, but especially with agglomerative hierarchical clustering it is difficult to properly validate the number of clusters to use. To determine how many clusters I would look at I generated two versions of elbow plots. Using agglomerative hierarchical clustering you could subdivide n teams into n clusters with a single team in each cluster. I took a quick first pass by looking at the mean number of teams per cluster as I increased the number of cluster, and you start to see a deflection point at ~10. 
+
+![alt text](Figures/ClusteringValidation/nTeams_per_cluster.png)
+
+This method, however, is not computationally rigorous, and so to confirm the decision to use 10 clusters I additionally used k-means clustering and looked at the percentage of the variance explained as I increase the number of clusters.
+
+![alt text](Figures/ClusteringValidation/PercentVar_per_cluster_kmeans.png)
+
+Using this approach, I plotted all clusters:
+
+![alt text](Figures/tsne/tsne_Agg_Clusters.png)
+
+Importantly, if we look across all years included in this analysis (2009-2018), we do not see any bias to any particular cluster depending on the year. This means that from 2009-2018 the way teams are organized has been relatively stable and similar. We can visualize this by plotting each year in a different color and superimpose these colors on the tsne plot or by visualizing the number of teams in each cluster by year:
+
+tSNE scatter by year       						 |  Number of teams per cluster
+:-----------------------------------------------:|:---------------------------------------------:
+![](Figures/tsne/tsne_Agg_Clusters_by_year.png)  |  ![](Figures/BarPlots/nClusters_each_year.png)
+
+
+Using both approaches we can see that in the last 10 years teams have been organized pretty similarly. This is despite the recent movement in basketball to what is affectionately called "small-ball," or putting smaller, like-sized players on the same team. This recent trend is most strikingly observed when considering how the position of power-forward or (PF) has changed from a big, physical player who shoots the ball close to the hoop (almost similar to a center, C), to shooting a high volume of 3-point shots:
+
+![](Figures/BarPlots/Yearly_plots_by_pos_3PA.png)
+
+
+
 
 
 
