@@ -131,10 +131,12 @@ Points per game (PPG)     						 |  Assists per game (APG)
 
 These graphs suggest that it is something specific about the structure of the team or the way the team is organized that predicts the team winning more games than it loses. To gain intuition about the team structure in clusters 2, 3, 4, and 8 let's look at some example graphs for each of these teams. First the winning teams
 
-		 				       		         |  Teams in cluster 2 		   	  			     |  
+Teams in cluster 2 		 				     |  Teams in cluster 2 		   	  			     |  Teams in cluster 2 
 :-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster1/2009_NJN.png)|  ![](Figures/TeamGraphs/Cluster1/2010_OKC.png)|  ![](Figures/TeamGraphs/Cluster1/2009_POR.png) 
+:-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster1/2011_CHI.png)|  ![](Figures/TeamGraphs/Cluster1/2011_MIA.png)|  ![](Figures/TeamGraphs/Cluster1/2013_TOR.png) 
+:-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster1/2014_HOU.png)|  ![](Figures/TeamGraphs/Cluster1/2018_POR.png)|  ![](Figures/TeamGraphs/Cluster1/2015_PHO.png) 
 
 		 				       		         |  Teams in cluster 8 		   	  			     |  
