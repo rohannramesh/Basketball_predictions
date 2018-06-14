@@ -66,21 +66,22 @@ I first built a graph for every team from 2009-2018 using data from [here](https
 I also scraped data for the collective team (total wins vs. losses, points for during each game, points against during each game, etc.) from [here](https://www.foxsports.com/nba/). I combined the graph theory metrics described below and incorporated them into my dataFrame containing the team metrics.
 
 Graph specifics and metrics collected from each graph
-	* Each graph is a directed graph, meaning that there is a direction ascribed to each edge (lines) between two nodes (players)
-		* This will later be useful as it allows us to determine the path length within a graph and who acts as a source (i.e a player who passes the ball) and a person who acts as a scorer (the person who receives the pass and scores)
-	* Each graph is visualized using the Kamada-kawai-layout which is a force based layout strategy that minimizes edge crossings and tries to enforce small uniform edge lengths
-	* Metrics collected from each graph for each team from every year
-		* weighted clustering - the geometric average of the subgraph edge weights
-			* clustering refers to tightly connected neighborhoods of nodes, i.e. the number of triangles a node participates in and weighted clustering additionally accounts for the Scoring Potential of that edge (connection between 2 nodes)
-		* eigenvector centrality - a measure of the influence of a node in a network (in our case a player on his team)
-			* a high eigenvector score means a node is connected to other high scoring nodes (i.e. a node is important if it is linked to other important nodes)
-		* pagerank - a ranking algorithm to measure the importance of a node by counting the number and quality of edges to that node
-			* a high pagerank in our graph means you score but don't generate points and a low pagerank means you pass but don't score
-		* dijkstra length - a way to define the shortest path between nodes factoring in the weight of each edge summed across all players in the graph
-		* shortest path length - alternate form for measuring path length
-		* closeness vitality - how much does the sum of the distances between all other nodes (as measured by edge weights) change when you drop out a node
-		* current flow closeness centrality - information centrality - an alternate approach to measuring centrality
-			* views the graph as a resistor network with edges as resistors and nodes as junctions
+
+* Each graph is a directed graph, meaning that there is a direction ascribed to each edge (lines) between two nodes (players)
+	* This will later be useful as it allows us to determine the path length within a graph and who acts as a source (i.e a player who passes the ball) and a person who acts as a scorer (the person who receives the pass and scores)
+* Each graph is visualized using the Kamada-kawai-layout which is a force based layout strategy that minimizes edge crossings and tries to enforce small uniform edge lengths
+* Metrics collected from each graph for each team from every year
+	* weighted clustering - the geometric average of the subgraph edge weights
+		* clustering refers to tightly connected neighborhoods of nodes, i.e. the number of triangles a node participates in and weighted clustering additionally accounts for the Scoring Potential of that edge (connection between 2 nodes)
+	* eigenvector centrality - a measure of the influence of a node in a network (in our case a player on his team)
+		* a high eigenvector score means a node is connected to other high scoring nodes (i.e. a node is important if it is linked to other important nodes)
+	* pagerank - a ranking algorithm to measure the importance of a node by counting the number and quality of edges to that node
+		* a high pagerank in our graph means you score but don't generate points and a low pagerank means you pass but don't score
+	* dijkstra length - a way to define the shortest path between nodes factoring in the weight of each edge summed across all players in the graph
+	* shortest path length - alternate form for measuring path length
+	* closeness vitality - how much does the sum of the distances between all other nodes (as measured by edge weights) change when you drop out a node
+	* current flow closeness centrality - information centrality - an alternate approach to measuring centrality
+		* views the graph as a resistor network with edges as resistors and nodes as junctions
 
 
 I then used all of these metric and performed agglomerative hierarchical clustering and dimensionality reduction using t-sne. By eye, it appeared like I had ~10 clusters, but especially with agglomerative hierarchical clustering it is difficult to properly validate the number of clusters to use. To determine how many clusters I would look at I generated two versions of elbow plots. Using agglomerative hierarchical clustering you could subdivide n teams into n clusters with a single team in each cluster. I took a quick first pass by looking at the mean number of teams per cluster as I increased the number of cluster, and you start to see a deflection point at ~10. 
@@ -91,7 +92,7 @@ This method, however, is not computationally rigorous, and so to confirm the dec
 
 ![alt text](Figures/ClusteringValidation/PercentVar_per_cluster_kmeans.png)
 
-Using this approach, I plotted all clusters:
+Using this approach, I can plot all clusters:
 
 ![alt text](Figures/tsne/tsne_Agg_Clusters.png)
 
@@ -106,8 +107,43 @@ Using both approaches we can see that in the last 10 years teams have been organ
 
 ![](Figures/BarPlots/Yearly_plots_by_pos_3PA.png)
 
+We can now easily visualize how each graph metric that we used contributed to the dimensionality reduction used:
 
+Eigenvector centrality       		   |  Pagerank    	  						       |  Dijkstra length
+:-------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
+![](Figures/tsne/tsne_eigcent.png)     |  ![](Figures/tsne/tsne_pgrank.png) 	       |  ![](Figures/tsne/tsne_dijlength.png) 
 
+We can easily see that different clusters are more strongly weighted to different metrics with brighter colors being larger values for each  graph metric.
 
+We can now use the same approach to see if the clusters we have identified are actually predictive of teams winning games. To quantify this we will subtract the number of losses (L) from the number of wins (W). I will now take the same approach and visualize W-L on top of the same tsne plot with brighter colors implying a team won more games than it lost. I can additionally show this by taking the mean W-L in all teams within a cluster and showing a barplot:
 
+Clusters 				       		   |  Wins - Losses tSNE plot    	  			   |  Wins - Losses barplot for individual clusters
+:-------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
+![](Figures/tsne/tsne_Agg_Clusters.png)|  ![](Figures/tsne/tsne_W-L.png) 	       |  ![](Figures/BarPlots/bar_clusters_W - L.png) 
+
+While in the tsne plot we see a clustering of bright colors in some clusters but not in others, the predictive power of each cluster is clear using the barplot (number of teams per cluster above or below each bar). Teams in clusters 2 and 8 were more likely to win games than to lose games, and teams in clusters 3 and 4 were more likely to lose games than to win games. This suggests there is something about the graphs for teams in clusters 2 and 8 that make them more likely to win vs. lose.
+
+To confirm this was due to the graph structure of the teams and not something trivial, we generated the same plots but for the two metrics used to build the graphs: points per game (PPG) and assists per game (APG). For example, we don't want clusters 2 and 8 to simply be identified as teams in that cluster scored the most points.
+
+Points per game (PPG)     						 |  Assists per game (APG)
+:-----------------------------------------------:|:---------------------------------------------:
+![](Figures/BarPlots/bar_clusters_PPG.png)       |  ![](Figures/BarPlots/bar_clusters_APG.png)
+
+These graphs suggest that it is something specific about the structure of the team or the way the team is organized that predicts the team winning more games than it loses. To gain intuition about the team structure in clusters 2, 3, 4, and 8 let's look at some example graphs for each of these teams. First the winning teams
+
+		 				       		         |  Teams in cluster 2 		   	  			    |  
+:-------------------------------------------:|:--------------------------------------------:|:---------------------------------------------:
+![](Figures/TeamGraphs/Cluster1/2009_NJN.png)| ![](Figures/TeamGraphs/Cluster1/2010_OKC.png)| ![](Figures/TeamGraphs/Cluster1/2009_POR.png) 
+![](Figures/TeamGraphs/Cluster1/2011_CHI.png)| ![](Figures/TeamGraphs/Cluster1/2011_MIA.png)| ![](Figures/TeamGraphs/Cluster1/2013_TOR.png) 
+![](Figures/TeamGraphs/Cluster1/2014_HOU.png)| ![](Figures/TeamGraphs/Cluster1/2018_POR.png)| ![](Figures/TeamGraphs/Cluster1/2015_PHO.png) 
+
+		 				       		         |  Teams in cluster 8 		   	  			    |  
+:-------------------------------------------:|:--------------------------------------------:|:---------------------------------------------:
+![](Figures/TeamGraphs/Cluster7/2009_LAL.png)| ![](Figures/TeamGraphs/Cluster7/2010_LAL.png)| ![](Figures/TeamGraphs/Cluster7/2011_LAL.png) 
+
+		 				       		         |  Teams in clusters 3 and 4 		   	  	    |  
+:-------------------------------------------:|:--------------------------------------------:|:---------------------------------------------:
+![](Figures/TeamGraphs/Cluster2/2012_DEN.png)| ![](Figures/TeamGraphs/Cluster2/2012_LAL.png)| ![](Figures/TeamGraphs/Cluster2/2014_CHI.png) 
+![](Figures/TeamGraphs/Cluster2/2016_BRK.png)| ![](Figures/TeamGraphs/Cluster3/2014_LAL.png)| ![](Figures/TeamGraphs/Cluster3/2013_ORL.png) 
+![](Figures/TeamGraphs/Cluster3/2015_PHI.png)| ![](Figures/TeamGraphs/Cluster3/2016_NOP.png)| ![](Figures/TeamGraphs/Cluster3/2015_BOS.png) 
 
