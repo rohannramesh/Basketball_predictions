@@ -141,9 +141,20 @@ Teams in cluster 8 		 				     |  Teams in cluster 8 		   	  			     |  Teams in
 :-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster7/2009_LAL.png)|  ![](Figures/TeamGraphs/Cluster7/2010_LAL.png)|  ![](Figures/TeamGraphs/Cluster7/2011_LAL.png) 
 
-Teams in clusters 3 		 				 |  Teams in clusters 3 and 4 		   	  	     
+Teams in clusters 3 		 				 |  Teams in clusters 4 		   	  	     
 :-------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster2/2012_LAL.png)|  ![](Figures/TeamGraphs/Cluster3/2015_PHI.png)
 ![](Figures/TeamGraphs/Cluster2/2016_BRK.png)|  ![](Figures/TeamGraphs/Cluster3/2014_LAL.png)
 ![](Figures/TeamGraphs/Cluster2/2014_CHI.png)|  ![](Figures/TeamGraphs/Cluster3/2016_NOP.png)
 
+When we look at all of these graphs, we see something really interesting. Cluster 2 is dominated by teams with 1-2 really important nodes that dictate a majority of the edges for each team (nodes with thick lines emanating connected to multiple other nodes). Using this visualization approach, we can see that most of these important nodes are on the outside of each graph. Strikingly, cluster 8 has only three teams, and the teams are the Los Angeles Lakers from 2009-2011. There was no information during the clustering about the identity of each team, so there is something about the structure of these teams that caused them to be clustered. In 2009 and 2010 the Lakers won the championship and in 2011 they reached the conference semifinals.
+
+Clusters 3 and 4 contained teams that on average lost more games than they won. Looking at these graphs we see very distributed, evenly spaced graphs without many "important nodes" as described above. This suggests these teams were less dominated by single players, and were more balanced, i.e. more players contributed to the Scoring Potential of each team.
+
+Looking at these graphs, I hypothesized that teams in clusters 2 and 8 had and were dominated by 1-3 "star players," whereas cluster 3 and 4 were more egalitarian in their roster construction. To test this hypothesis we turned to a commonly used advanced statistic called Player Efficiency Rating or PER. This statistic was created by ESPN's John Hollinger are "sums all of a player's positive accomplishments, subtracts the negative accomplishments and returns a per-minute rating of a player's performance." It is considered that an average NBA player will have a PER of 15, and a borderline All-Star will have a PER of 20+ and a Definite All-Star will have a PER of 22.5+ (see [here](https://en.wikipedia.org/wiki/Player_efficiency_rating). For all teams we ranked their players from highest to lowest PER and looked at the difference for each cluster:
+
+![](Figures/TeamGraphs/TeamMetrics_per_player_PER.png)
+
+Strikingly, we see that for clusters 2 and 8, their top 2 players are better than the 2 best players for clusters 3 and 4, but players 5-8 (the rest of their playing rotation) is worse for clusters 2 and 8 vs. clusters 3 and 4. This suggests that the teams that win the most games have 1-2 really good players and the rest of their players are average or below average, and teams that lose more games than they win are more evenly distributed.
+
+We then asked which of our graph metrics most strongly predicted being an "All-Star" or were most predictive of the PER metric described above.
