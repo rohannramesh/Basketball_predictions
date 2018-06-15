@@ -84,21 +84,19 @@ Graph specifics and metrics collected from each graph
 		* views the graph as a resistor network with edges as resistors and nodes as junctions
 
 
-I then used all of these metric and performed agglomerative hierarchical clustering and dimensionality reduction using t-sne. By eye, it appeared like I had ~10 clusters, but especially with agglomerative hierarchical clustering it is difficult to properly validate the number of clusters to use. To determine how many clusters I would look at I generated two versions of elbow plots. Using agglomerative hierarchical clustering you could subdivide n teams into n clusters with a single team in each cluster. I took a quick first pass by looking at the mean number of teams per cluster as I increased the number of cluster, and you start to see a deflection point at ~10. 
+I then used all of these metric and performed agglomerative hierarchical clustering and dimensionality reduction using t-sne. By eye, it appeared like I had ~10 clusters, but especially with agglomerative hierarchical clustering it is difficult to properly validate the number of clusters to use. To determine how many clusters I would look at I generated two versions of elbow plots. Using agglomerative hierarchical clustering you could subdivide n teams into n clusters with a single team in each cluster. I took a quick first pass by looking at the mean number of teams per cluster as I increased the number of cluster, and you start to see a deflection point at ~10. This method, however, is not computationally rigorous, and so to confirm the decision to use 10 clusters I additionally used k-means clustering and looked at the percentage of the variance explained as I increase the number of clusters:
 
-![alt text](Figures/ClusteringValidation/nTeams_per_cluster.png)
+Number of teams per cluster						          |  Percent variance explained
+:--------------------------------------------------------:|:-------------------------------------------------------------------:
+![](Figures/ClusteringValidation/nTeams_per_cluster.png)  |  ![](Figures/ClusteringValidation/PercentVar_per_cluster_kmeans.png)
 
-This method, however, is not computationally rigorous, and so to confirm the decision to use 10 clusters I additionally used k-means clustering and looked at the percentage of the variance explained as I increase the number of clusters.
-
-![alt text](Figures/ClusteringValidation/PercentVar_per_cluster_kmeans.png)
-
-Using this approach, I can plot all clusters:
+Once I confirmed my decision to use 10 clusters, I can now color code my tsne plot to visualize each cluster:
 
 ![alt text](Figures/tsne/tsne_Agg_Clusters.png)
 
 Importantly, if we look across all years included in this analysis (2009-2018), we do not see any bias to any particular cluster depending on the year. This means that from 2009-2018 the way teams are organized has been relatively stable and similar. We can visualize this by plotting each year in a different color and superimpose these colors on the tsne plot or by visualizing the number of teams in each cluster by year:
 
-tSNE scatter by year       						 |  Number of teams per cluster
+tSNE scatter by year       						 |  Number of teams per cluster each year
 :-----------------------------------------------:|:---------------------------------------------:
 ![](Figures/tsne/tsne_Agg_Clusters_by_year.png)  |  ![](Figures/BarPlots/nClusters_each_year.png)
 
@@ -115,6 +113,8 @@ Eigenvector centrality       		   |  Pagerank    	  						       |  Dijkstra len
 
 We can easily see that different clusters are more strongly weighted to different metrics with brighter colors being larger values for each  graph metric.
 
+## Are cluster predictive of team performance?
+
 We can now use the same approach to see if the clusters we have identified are actually predictive of teams winning games. To quantify this we will subtract the number of losses (L) from the number of wins (W). I will now take the same approach and visualize W-L on top of the same tsne plot with brighter colors implying a team won more games than it lost. I can additionally show this by taking the mean W-L in all teams within a cluster and showing a barplot:
 
 Clusters 				       		   |  Wins - Losses tSNE plot    	  			   |  Wins - Losses barplot for individual clusters
@@ -129,7 +129,7 @@ Points per game (PPG)     						 |  Assists per game (APG)
 :-----------------------------------------------:|:---------------------------------------------:
 ![](Figures/BarPlots/bar_clusters_PPG.png)       |  ![](Figures/BarPlots/bar_clusters_APG.png)
 
-These graphs suggest that it is something specific about the structure of the team or the way the team is organized that predicts the team winning more games than it loses. To gain intuition about the team structure in clusters 2, 3, 4, and 8 let's look at some example graphs for each of these teams. First the winning teams
+These graphs suggest that it is something specific about the structure of the team or the way the team is organized that predicts the team winning more games than it loses. To gain intuition about the team structure in clusters 2, 3, 4, and 8 let's look at some example graphs for each of these teams. For graphs of every team for all clusters see Figures/TeamGraphs.
 
 Teams in cluster 2 		 				     |  Teams in cluster 2 		   	  			       
 :-------------------------------------------:|:---------------------------------------------:
@@ -141,7 +141,7 @@ Teams in cluster 8 		 				     |  Teams in cluster 8 		   	  			     |  Teams in
 :-------------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster7/2009_LAL.png)|  ![](Figures/TeamGraphs/Cluster7/2010_LAL.png)|  ![](Figures/TeamGraphs/Cluster7/2011_LAL.png) 
 
-Teams in clusters 3 		 				 |  Teams in clusters 4 		   	  	     
+Teams in cluster 3 		 				     |  Teams in cluster 4 		   	  	     
 :-------------------------------------------:|:---------------------------------------------:
 ![](Figures/TeamGraphs/Cluster2/2012_LAL.png)|  ![](Figures/TeamGraphs/Cluster3/2015_PHI.png)
 ![](Figures/TeamGraphs/Cluster2/2016_BRK.png)|  ![](Figures/TeamGraphs/Cluster3/2014_LAL.png)
@@ -155,6 +155,43 @@ Looking at these graphs, I hypothesized that teams in clusters 2 and 8 had and w
 
 ![](Figures/TeamGraphs/TeamMetrics_per_player_PER.png)
 
-Strikingly, we see that for clusters 2 and 8, their top 2 players are better than the 2 best players for clusters 3 and 4, but players 5-8 (the rest of their playing rotation) is worse for clusters 2 and 8 vs. clusters 3 and 4. This suggests that the teams that win the most games have 1-2 really good players and the rest of their players are average or below average, and teams that lose more games than they win are more evenly distributed.
+Strikingly, we see that for clusters 2 and 8, their top 2 players are better than the 2 best players for clusters 3 and 4, but players 5-8 (the rest of their playing rotation) is worse for clusters 2 and 8 vs. clusters 3 and 4. This suggests that the teams that win the most games have 1-2 really good players and the rest of their players are average or below average, and teams that lose more games than they win are more evenly distributed. Looking at a graph like this suggests that teams should invest most of their money into a few very good players, and fill out the roster with average to below average players.
 
-We then asked which of our graph metrics most strongly predicted being an "All-Star" or were most predictive of the PER metric described above.
+## Predicting Player Efficiency Rating (PER) from graph theory metrics
+
+We then asked which of our graph metrics most strongly predicted being an "All-Star" or were most predictive of the PER metric described above. To do this we implemented a Random Forests Classifier. This approach will build a "forest" of decision trees, each of which votes, and the forest chooses the classification with the most votes. In order to build this classifier we subdivided the Player Efficiency Rating statistic from the last 10 years into 3 equally sized bins as shown below:
+
+![](Figures/RF_Classification/PER_histogram.png)
+
+Once again, an average player has a PER of 15.0. When we trained the classifier, theoretically, you can just use the out-of-bag score (those options held out during the construction of a decision tree), however, I was still worried about potentially overfitting so I intentially build the Random Forests model using 80%$ of the data and test on the other 20%. I also had to decide how many trees to have in my Forest, and so I tried 20-500 trees:
+
+![](Figures/RF_Classification/nTrees_classification_PER.png)
+
+We can clearly see the classifier performs above chance (still should do stats to validate), and that as hoped for / expected the prediction accuracy out-of-bag and the test set accuracy is very similar. If I then choose to use 100 trees for my final model, I can build a confusion matrix to show the model performance for all 3 bins and where the model made errors:
+
+![](Figures/RF_Classification/PER_confusion_matrix.png)
+
+Perhaps unsurprisingly, the model classified above-average and below-average players relatively well, about 70% prediction accuracy and up, but struggle more will players in the mid PER category. Future work should dive deeper into these errors because it could be that the graph theory metrics that we are using might actually predict greater success in the constraints of the team than the PER metric itself.
+
+Finally, using the approach we can ask what graph theory metrics were most predictive of the Player Efficiency Rating (PER) metric:
+
+![](Figures/RF_Classification/PER_category_importance.png)
+
+We can now see that Eigenvector Centrality, a measure of the influence of a node in the network, was most predictive of PER, but many of the graph theory metrics contributed to this classification.
+
+## Future directions
+
+1. I initially pitched this approach as a way to analyze players within the framework of a team. Who are the players that the graph theory metrics think are important, but are not as highly rated by single player statistics? Other than eigenvector centrality, what are the most important other metrics to think about?
+	* Potential approach: if a single player statistical metric and a graph theory metric are related look at the players with the largest residuals, i.e. those players that are furthest from the line of unity and are strongly supported by the graph theory metrics
+
+2. With the move to more "small-ball" lineups, how has the Power-Forward position's role changed within the constraints of the graph. Is this at all predictive of a team's success?
+	* Potential approach: identify those teams with the largest jump in 3-point shot attempts for Power-Forwards from year 1 to year 2, look at the graph metrics for such a player and ask if any of these are predictive of an increase in wins? Obviously it will be tough to control for other changes... maybe partial correlations?
+
+3. Evaluate player improvement. Let's identify those players with the largest jump in PER from year 1 to year 2. What were the ways in which this player got better? Was it usually in a specific manner as it relates to the team?
+
+
+
+
+
+
+
