@@ -4,6 +4,9 @@ import re
 import difflib
 import pandas as pd
 import matplotlib.pyplot as plt
+from bs4 import BeautifulSoup
+import requests
+
 
 def isfloat(value):
     """
@@ -17,6 +20,22 @@ def isfloat(value):
         return True
     except ValueError:
         return False
+
+
+def get_soups(websites, curr_year):
+    """
+    Scrape site and get the soups for a given year
+    :param websites: list with all websites interested in scraping
+    :param curr_year: the year you want to extract - simple replace of default year (2012)
+    :return: all_soups: the soup from each website
+    """
+    all_soups = {}
+    for i in range(0, len(websites)):
+        curr_site = websites[i]
+        curr_year_site = curr_site.replace("2012", str(curr_year))
+        page = requests.get(curr_year_site)
+        all_soups[str(i)] = BeautifulSoup(page.text, 'lxml')
+    return all_soups
 
 
 def get_data_table(soup):
@@ -136,6 +155,28 @@ def get_stats_player(dataset, headers, year, stat="all", name="all", pos='all'):
     else:
         final_output = data_for_relevant_col
     return final_output
+
+
+def build_dataframe(all_data, all_headers, curr_year):
+    """
+    Build one dataframe for each website scraped for each year. This function handles data at the
+    level of either players or teams and scales up for many different sites scraped and for each stat included
+    :param all_data: a list of dicts. Each dict['year'] contains a list for each player/ team on that year
+    :param all_headers: relevant stats kept for that year (i.e. data columns)
+    :param curr_year: year you want to analyze - pass this in to maintain symmetry with earlier functions
+    :return: all_df: a list of dataFrames that corresponds to each incoming dict
+    """
+    all_df = []
+    for i in range(0,len(all_data)):
+        yearly_data = all_data[i]
+        yearly_headers = all_headers[i]
+        curr_dict = {}
+        for curr_header in yearly_headers[str(curr_year)]:
+            A = get_stats_player(yearly_data, yearly_headers, curr_year, stat=curr_header)
+            curr_dict[curr_header] = A[0]
+        curr_df = pd.DataFrame(data=curr_dict)
+        all_df.append(curr_df)
+    return all_df
 
 
 def get_yearly_data_foxsports(curr_soup, wins_tag=False):

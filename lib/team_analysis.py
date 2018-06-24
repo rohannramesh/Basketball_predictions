@@ -357,5 +357,3 @@ def plot_confusion_matrix(cm, classes, normalize=False,
             "/Users/rohanramesh/Documents/SportsData/NBA/Figures/RF_Classification/%s_cm_" % title,
             bbox_inches='tight', dpi=100)
 
-def test_if_correct(A):
-    print(A)
