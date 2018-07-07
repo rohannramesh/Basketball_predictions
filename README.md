@@ -2,7 +2,7 @@
 
 # Quantifying single player performance and team success by looking at player to player interactions
 
-In recent years, advanced sports analytics has changed the way we evaluate individual players and teams for many sports. While the popularization of sports analytics started in baseball, most sports have kept some form of statistics for decades. We evaluate how "useful" or "valuable" players are by providing numbers that quantify their performance on the field, court, etc. The expectation is that having players with good individual statistics will lead to team success, but it is unclear if this approach works or is ideal for all sports. In many ways, baseball is the perfect sport for this type of analytical approach: one pitcher faces one batter and each pitch or each at bat represents an independent sample that we can quantify and evaluate. Basketball, however, is more challenging. While there are commonly cited statistics such as how many points a player scores per game (points per game: PPG), or how many passes by a player results in points (assists), these numbers can be difficult to evaluate in isolation. In basketball there are only five players on the court for each team. In a standard basketball possession, all five players might touch the ball or influence the current play, suggesting it might be important to quantitatively evaluate how players interact with each other. Fundamentally, basketball is a team game. Therefore to evaluate players and team success, it is useful to evaluate player performance in the framework of the team. To do this we will turn to graph theory to model the pairwise relations between players on a team. Using this approach we can simultaneous evaluate the importance of single player to their team, what team structures or architectures are most successful (i.e. lead to the most wins), and potentially provide new metrics for player evaluation.
+In recent years, advanced sports analytics has changed the way we evaluate individual players and teams for many sports. While the popularization of sports analytics started in baseball, most sports have kept some form of statistics for decades. We evaluate how "useful" or "valuable" players are by providing numbers that quantify their performance on the field, court, etc. The expectation is that having players with good individual statistics will lead to team success, but it is unclear if this approach is ideal for all sports. In many ways, baseball is the perfect sport for this type of analytical approach: one pitcher faces one batter and each pitch or each at bat represents an independent sample that we can quantify and evaluate. Basketball, however, is more challenging. While there are commonly cited statistics such as how many points a player scores per game (points per game: PPG), or how many passes by a player results in points (assists), these numbers can be difficult to evaluate in isolation. In basketball there are only five players on the court for each team. In a standard basketball possession, all five players might touch the ball or influence the current play, suggesting it might be important to quantitatively evaluate how players interact with each other. Fundamentally, basketball is a team game. Therefore to evaluate players' and team success, it is useful to evaluate player performance in the framework of the team. To do this we will turn to graph theory to model the pairwise relations between players on a team. Using this approach we can simultaneous evaluate the importance of single player to their team, what team structures or architectures are most successful (i.e. lead to the most wins), and potentially provide new metrics for player evaluation.
 
 ## Building the graph for each team
 
@@ -42,12 +42,12 @@ If we look at the same plot for the team the Golden State Warriors played in the
 
 ![alt text](Figures/TeamGraphs/CLE_2018_full.png)
 
-While the Golden State Warriors have multiple heavily interconnected nodes with thick lines representing a high Scoring Potential, the Cleveland Cavaliers have essentially one node (LeBron James) that dominates the team graph. All high Scoring Potentials (thick lines) are associated with LeBron James, and there are no thick lines between two non-LeBron James players.
+While the Golden State Warriors have multiple, heavily interconnected nodes with thick lines representing a high Scoring Potential, the Cleveland Cavaliers have essentially one node (LeBron James) that dominates the team graph. All high Scoring Potentials (thick lines) are associated with LeBron James, and there are no thick lines between two non-LeBron James players.
 By using this graph-theory approach we can easily show that the Cleveland Cavaliers were strongly dependent on one player whereas the Golden State Warriors were extremely balanced and could score using many different combinations of players.
 
 ## Results
 
-* Over the past 10 years there has consistently been 10 different types of team architectures
+* Over the past 10 years there has consistently been  about 10 different types of team structures/architectures
 	* This implies that even though teams are shooting more 3-point shots and playing more "small-ball" (fewer players over 6'10" and more like-size, smaller players on the floor at one time, i.e. Golden State's famous Death-lineup / the Hampton's Five), teams are still organized the same way
 
 * Certain graph/team architectures are more likely to produce wins than losses
@@ -55,20 +55,27 @@ By using this graph-theory approach we can easily show that the Cleveland Cavali
 	* Teams that lose more games than they win are more balanced and less dependent on single players
 	* On average, the top 3 players are better on winning teams than on losing teams (as measured by a Player Efficiency Rating or PER)
 	* On average, the bottom 5 players (of an 8 man rotation) are worse on winning teams than on losing teams 
+	* Succesful teams are therefore "top-heavy," i.e. dependent on a few "star" players
 
 * We can use graph theory metrics to predict advanced stats for individual players like Player Efficiency Rating, suggesting player-player and player-team interactions can be used as an evaluation approach
 	* The eigenvector centrality (will be discussed below) was most strongly predictive of individual player statistics such as PER, though many other graph theory metrics did contribute
 
+## Notebooks included
+
+	* [Scraping team and player data](get_yearly_data.ipynb)
+	* [Team and player analyses](Team_by_team_analysis.ipynb)
+	* [Data exploration](Data_Exploration.ipynb)
+
 ## Analytical approach
 
-I first built a graph for every team from 2009-2018 using data from [here](https://www.basketball-reference.com/) and the methods described above. Because teams will change the players at the end of their roster (i.e. people who do not play very often), I subselected the top 8 players in terms of minutes played for each team. Within my dataset for individual players I scraped individual per game statistics (most commonly used), per 100 possession statistics, and advanced statistics (amalgamations of single player per game and per 100 possession statistics). Importantly, for those players that played for multiple teams within the same season, I only included the team on which they played the most minutes so that I would not double count any player.
+I first built a graph for every team from 2009-2018 using data from [here](https://www.basketball-reference.com/) and the methods described above. Because teams will change the players at the end of their roster (i.e. people who do not play very often), I subselected the top 8 players in terms of minutes played for each team. Within my dataset for individual players I scraped individual per game statistics (most commonly used), per 100 possession statistics (does not factor in the number of minutes played, but rather will extrapolate out as if each player had the same number of possessions), and advanced statistics (amalgamations of single player per game and per 100 possession statistics). Importantly, for those players that played for multiple teams within the same season, I only included the team on which they played the most minutes so that I would not double count any player.
 
 I also scraped data for the collective team (total wins vs. losses, points for during each game, points against during each game, etc.) from [here](https://www.foxsports.com/nba/). I combined the graph theory metrics described below and incorporated them into my dataFrame containing the team metrics.
 
 Graph specifics and metrics collected from each graph
 
 * Each graph is a directed graph, meaning that there is a direction ascribed to each edge (lines) between two nodes (players)
-	* This will later be useful as it allows us to determine the path within a graph and who acts as a source (i.e a player who passes the ball) and a person who acts as a scorer (the person who receives the pass and scores)
+	* This will later be useful as it allows us to determine the path within a graph and who acts as a source (i.e a player who passes the ball) and a person who acts as a sink (the person who receives the pass and scores)
 * Each graph is visualized using the Kamada-kawai-layout which is a force based layout strategy that minimizes edge crossings and tries to enforce small uniform edge lengths
 	* In this layout, the more important players tend to be on the outside of the graph
 * Metrics collected from each graph for each team from every year
@@ -123,7 +130,7 @@ Clusters 				       		   |  Wins - Losses tSNE plot    	  			   |  Wins - Losses
 :-------------------------------------:|:---------------------------------------------:|:---------------------------------------------:
 ![](Figures/tsne/tsne_Agg_Clusters.png)|  ![](Figures/tsne/tsne_W-L.png) 	           |  ![](Figures/BarPlots/bar_clusters_W-L.png) 
 
-While in the tsne plot we see a clustering of bright colors in some clusters but not in others, the predictive power of each cluster is clear using the barplot (number of teams per cluster above or below each bar). Teams in clusters 2 and 8 were more likely to win games than to lose games, and teams in clusters 3 and 4 were more likely to lose games than to win games. This suggests there is something about the graphs for teams in clusters 2 and 8 that make them more likely to win vs. lose.
+While in the tsne plot we see a clustering of bright colors in some clusters but not in others, the predictive power of each cluster is clearer using the barplot (number of teams per cluster above or below each bar). Teams in clusters 2 and 8 were more likely to win games than to lose games, and teams in clusters 3 and 4 were more likely to lose games than to win games. This suggests there is something about the graphs for teams in clusters 2 and 8 that make them more likely to win vs. lose.
 
 To confirm this was due to the graph structure of the teams and not something trivial, as a control, we generated the same plots but for the two metrics used to build the graphs: points per game (PPG) and assists per game (APG). For example, we do not want clusters 2 and 8 to win more games simply because they score more points.
 
@@ -189,9 +196,12 @@ We can now see that Eigenvector Centrality, a measure of the influence of a node
 2. With the move to more "small-ball" lineups, how has the Power-Forward position's role changed within the constraints of the graph. Is this at all predictive of a team's success?
 	* Potential approach: identify those teams with the largest jump in 3-point shot attempts for Power-Forwards from year 1 to year 2, look at the graph metrics for such a player and ask if any of these are predictive of an increase in wins? Obviously it will be tough to control for other changes... maybe partial correlations or a generalized linear model?
 
-3. Evaluate player improvement. Let's identify those players with the largest jump in PER from year 1 to year 2. What were the ways in which this player got better? Was it usually in a specific manner as it relates to the team?
+3. Look at the evolution of pairs of players and how this benefits team performance. As players play more with their teammates and improve, the Scoring Potential between teammates might increase. It would be interesting to know if the edge weight (Scoring Potential) between two specific players is predictive of the team's record and of how much a team improves their record.
 
-4. Look at the evolution of pairs of players and how this benefits team performance. As players play more with their teammates and improve, the Scoring Potential between teammates might increase. It would be interesting to know if the edge weight (Scoring Potential) between two specific players is predictive of the team's record and of how much a team improves their record.
+4. Lets evaluate how the graph of a team changes with time. Does a shift in the architecture/structure of a team lead to more wins?
+
+5. Evaluate player improvement. Let's identify those players with the largest jump in PER from year 1 to year 2. What were the ways in which this player got better? Was it usually in a specific manner as it relates to the team?
+
 
 
 
