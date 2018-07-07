@@ -62,11 +62,12 @@ By using this graph-theory approach we can easily show that the Cleveland Cavali
 
 ## Notebooks included
 
-	* [Scraping team and player data](get_yearly_data.ipynb)
-	* [Team and player analyses](Team_by_team_analysis.ipynb)
-	* [Data exploration](Data_Exploration.ipynb)
+* [Scraping team and player data](get_yearly_data.ipynb)
+* [Team and player analyses](Team_by_team_analysis.ipynb)
+* [Data exploration](Data_Exploration.ipynb)
 
 ## Analytical approach
+
 
 I first built a graph for every team from 2009-2018 using data from [here](https://www.basketball-reference.com/) and the methods described above. Because teams will change the players at the end of their roster (i.e. people who do not play very often), I subselected the top 8 players in terms of minutes played for each team. Within my dataset for individual players I scraped individual per game statistics (most commonly used), per 100 possession statistics (does not factor in the number of minutes played, but rather will extrapolate out as if each player had the same number of possessions), and advanced statistics (amalgamations of single player per game and per 100 possession statistics). Importantly, for those players that played for multiple teams within the same season, I only included the team on which they played the most minutes so that I would not double count any player.
 
