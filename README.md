@@ -6,7 +6,7 @@ In recent years, advanced sports analytics has changed the way we evaluate indiv
 
 ## Building the graph for each team
 
-All of the single player data was scraped from [here](https://www.basketball-reference.com/) using this [code](get_yearly_data.ipynb). From this website we can collect all of the statistics for each player from multiple years (for the purposes of this work I have only included from 2009-present day). These statistics include per game averages, averages per 100 possesions, and some of the commonly used advanced statistics used in basketball (discussed below). Below you can see a subselection of the stats included for the current NBA champions, the Golden State Warriors. We can see all of the players on this team, what position they play (Pos), their points per game and assists, the number minutes played (MP), the number of field goals (baskets) made (FG) and attempted per game (FGA), as well as their shooting percentages for two- and three-point shots (2P% and 3P%)
+All of the single player data was scraped from [here](https://www.basketball-reference.com/) using this [code](get_yearly_data.ipynb). From this website we can collect all of the statistics for each player from multiple years (for the purposes of this work I have only included from 2009-present day). These statistics include per game averages, averages per 100 possesions, and some of the commonly used advanced statistics used in basketball (discussed below). Below you can see a subselection of the stats included for the current NBA champions, the Golden State Warriors. We can see all of the players on this team, what position they play (Pos), their points per game and assists, the number of minutes played (MP), the number of field goals (baskets) made (FG) and attempted per game (FGA), as well as their shooting percentages for two- and three-point shots (2P% and 3P%)
 
 | Player           | Pos | Tm  | PPG  | AST | MP   | FG  | FGA  | 2P%   | 3P%   |
 |------------------|-----|-----|------|-----|------|-----|------|-------|-------|
@@ -51,7 +51,7 @@ By using this graph-theory approach we can easily show that the Cleveland Cavali
 	* This implies that even though teams are shooting more 3-point shots and playing more "small-ball" (fewer players over 6'10" and more like-size, smaller players on the floor at one time, i.e. Golden State's famous Death-lineup / the Hampton's Five), teams are still organized the same way
 
 * Certain graph/team architectures are more likely to produce wins than losses
-	* Winning teams are centered around 1-3 "stars" or players that dominate their teams graph
+	* Winning teams are centered around 1-3 "stars" or players that dominate their team's graph
 	* Teams that lose more games than they win are more balanced and less dependent on single players
 	* On average, the top 3 players are better on winning teams than on losing teams (as measured by a Player Efficiency Rating or PER)
 	* On average, the bottom 5 players (of an 8 man rotation) are worse on winning teams than on losing teams 
@@ -100,7 +100,7 @@ Number of teams per cluster						          |  Percent variance explained
 :--------------------------------------------------------:|:-------------------------------------------------------------------:
 ![](Figures/ClusteringValidation/nTeams_per_cluster.png)  |  ![](Figures/ClusteringValidation/PercentVar_per_cluster_kmeans.png)
 
-Once I confirmed my decision to use 10 clusters, I can now color code my tsne plot to visualize each cluster:
+Once I confirmed my decision to use 10 clusters, I can now color code my tsne plot to visualize each cluster. In this plot each dot corresponds to a team and the color corresponds to the cluster:
 
 ![alt text](Figures/tsne/tsne_Agg_Clusters.png)
 
@@ -161,7 +161,7 @@ When we look at all of these graphs, we see something really interesting. Cluste
 
 Clusters 3 and 4 contained teams that on average lost more games than they won. Looking at these graphs we see very distributed, evenly spaced graphs without many "important nodes" as described above. This suggests these teams were less dominated by single players, and were more balanced, i.e. more players contributed to the Scoring Potential of each team.
 
-Looking at these graphs, I hypothesized that teams in clusters 2 and 8 were dominated by 1-3 "star players," whereas cluster 3 and 4 were more egalitarian in their roster construction. To test this hypothesis we turned to a commonly used advanced statistic called Player Efficiency Rating or PER. This statistic was created by ESPN's John Hollinger and "sums all of a player's positive accomplishments, subtracts the negative accomplishments and returns a per-minute rating of a player's performance." It is considered that an average NBA player will have a PER of 15,  a borderline All-Star will have a PER of 20+, and a Definite All-Star will have a PER of 22.5+ (see [here](https://en.wikipedia.org/wiki/Player_efficiency_rating). For all teams we ranked their players from highest to lowest PER and looked at this for each cluster:
+Looking at these graphs, I hypothesized that teams in clusters 2 and 8 were dominated by 1-3 "star players," whereas cluster 3 and 4 were more egalitarian in their roster construction. To test this hypothesis we turned to a commonly used advanced statistic called Player Efficiency Rating or PER. This statistic was created by ESPN's John Hollinger and "sums all of a player's positive accomplishments, subtracts the negative accomplishments and returns a per-minute rating of a player's performance." It is considered that an average NBA player will have a PER of 15,  a borderline All-Star will have a PER of 20+, and a Definite All-Star will have a PER of 22.5+ (see [here](https://en.wikipedia.org/wiki/Player_efficiency_rating)). For all teams we ranked their players from highest to lowest PER and looked at this for each cluster:
 
 ![](Figures/TeamGraphs/TeamMetrics_per_player_PER.png)
 
@@ -177,7 +177,7 @@ Once again, an average player has a PER of 15.0. When we trained the classifier,
 
 ![](Figures/RF_Classification/nTrees_classification_PER.png)
 
-We can clearly see the classifier performs above chance (still should do stats to validate; dotted line represents chance), and that as hoped for / expected the prediction accuracy out-of-bag and the test set accuracy is very similar. If I then choose to use 100 trees for my final model, I can build a confusion matrix to show the model performance for all 3 bins and where the model made errors:
+We can clearly see the classifier performs above chance (dotted line represents chance), and that as hoped for / expected the prediction accuracy out-of-bag and the test set accuracy is very similar. If I then choose to use 100 trees for my final model, I can build a confusion matrix to show the model performance for all 3 bins and where the model made errors:
 
 ![](Figures/RF_Classification/PER_confusion_matrix.png)
 
